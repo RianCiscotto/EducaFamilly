@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-exe39q*np1ltn6=ql5feug)d*8ce)$o2g!rt385m(xezg)cw%d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "educafamilly-chats.onrender.com",
+    "localhost",
+    "127.0.0.1"
+]
+
 
 
 # Application definition
@@ -128,3 +133,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
