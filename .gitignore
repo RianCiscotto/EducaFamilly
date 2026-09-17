@@ -1,0 +1,27 @@
+```text
+# Banco de dados local
+db.sqlite3
+
+# Ambiente virtual
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Variáveis de ambiente
+.env
+
+# Arquivos estáticos coletados
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+```
