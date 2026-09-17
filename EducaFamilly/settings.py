@@ -36,14 +36,18 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'accounts',
     'chat',
+    'channels',
 ]
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -77,6 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'EducaFamilly.wsgi.application'
+ASGI_APPLICATION = 'EducaFamilly.asgi.application'
 
 
 # Database
@@ -134,3 +139,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}

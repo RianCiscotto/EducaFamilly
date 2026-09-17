@@ -1,24 +1,921 @@
+
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'chat/style.css' %}">
+<!DOCTYPE html>
+<html lang="pt-br">
 
-<h2>Chat</h2>
-<a href="/chat" 
-   style="background-color: #2fb3f0; color: #ffffff; padding: 10px; border-radius: 8px; text-decoration: none;">
-   Voltar
-</a>
-<br>
-<br><br>
+<head>
 
-<div style="border:1px solid #ccc; padding:10px; height:300px; overflow-y:auto;">
-    {% for m in messages %}
-        <p><b>{{ m.sender.username }}:</b> {{ m.text }}</p>
-    {% endfor %}
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Chat com {{ other.username }} - EducaFamilly
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'chat/style.css' %}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 850px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* =====================================
+           CABEÇALHO
+        ===================================== */
+
+        .cabecalho {
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
+        }
+
+        .usuario-nome {
+            margin: 0;
+            color: #222;
+        }
+
+        .status {
+            margin-top: 7px;
+            font-size: 14px;
+        }
+
+        /* =====================================
+           VOLTAR
+        ===================================== */
+
+        .voltar {
+            display: inline-block;
+            color: #2f8f03;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .voltar:hover {
+            text-decoration: underline;
+        }
+
+        /* =====================================
+           ÁREA DO CHAT
+        ===================================== */
+
+        #chat-messages {
+            border: 1px solid #ddd;
+            padding: 18px;
+            height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* =====================================
+           MENSAGENS
+        ===================================== */
+
+        .mensagem {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.45;
+            word-wrap: break-word;
+        }
+
+        /* Mensagem recebida */
+
+        .mensagem.recebida {
+            align-self: flex-start;
+
+            background: #ffffff;
+
+            border: 1px solid #dddddd;
+
+            color: #333;
+
+            border-top-left-radius: 3px;
+        }
+
+        /* Minha mensagem */
+
+        .mensagem.enviada {
+            align-self: flex-end;
+
+            background: #c9dcff; 
+
+            border: 1px solid #000000;
+
+            color: #333;
+
+            border-top-right-radius: 3px;
+        }
+
+        /* Nome da pessoa */
+
+        .mensagem-nome {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2f8f03;
+            margin-bottom: 4px;
+        }
+
+        /* =====================================
+           DIGITANDO
+        ===================================== */
+
+        #typing-status {
+            height: 22px;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        /* =====================================
+           FORMULÁRIO
+        ===================================== */
+
+        #chat-form {
+            display: flex;
+            gap: 8px;
+        }
+
+        #chat-message-input {
+            flex: 1;
+
+            padding: 11px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 6px;
+
+            outline: none;
+
+            font-size: 14px;
+        }
+
+        #chat-message-input:focus {
+            border-color: #2f8f03;
+        }
+
+        #send-button {
+            padding: 10px 18px;
+
+            background: #2f8f03;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+        }
+
+        #send-button:hover {
+            background: #247000;
+        }
+
+        #send-button:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* =====================================
+           RODAPÉ
+        ===================================== */
+
+        .rodape {
+            margin-top: 25px;
+
+            text-align: center;
+
+            color: #999;
+
+            font-size: 12px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+    <!-- =====================================
+         CABEÇALHO
+    ===================================== -->
+
+    <div class="cabecalho">
+
+        <h2 class="usuario-nome">
+            Chat com {{ other.username }}
+        </h2>
+
+        <div
+            id="user-status"
+            class="status"
+        >
+
+            <span
+                id="status-indicator"
+                style="color:#999;"
+            >
+                ●
+            </span>
+
+            <span id="status-text">
+                Verificando...
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         VOLTAR
+    ===================================== -->
+
+    <a
+        href="{% url 'conversations' %}"
+        class="voltar"
+    >
+        ← Voltar para conversas
+    </a>
+
+
+    <!-- =====================================
+         MENSAGENS
+    ===================================== -->
+
+    <div id="chat-messages">
+
+        {% for m in messages %}
+
+            {% if m.sender.id == request.user.id %}
+
+                <!-- MINHA MENSAGEM -->
+
+                <div class="mensagem enviada">
+
+                    {{ m.text }}
+
+                </div>
+
+            {% else %}
+
+                <!-- MENSAGEM RECEBIDA -->
+
+                <div class="mensagem recebida">
+
+                    <div class="mensagem-nome">
+                        {{ m.sender.username }}
+                    </div>
+
+                    {{ m.text }}
+
+                </div>
+
+            {% endif %}
+
+        {% empty %}
+
+            <div
+                id="empty-message"
+                style="
+                    color:#999;
+                    text-align:center;
+                    width:100%;
+                "
+            >
+                Nenhuma mensagem ainda.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- =====================================
+         DIGITANDO
+    ===================================== -->
+
+    <div id="typing-status"></div>
+
+
+    <!-- =====================================
+         FORMULÁRIO
+    ===================================== -->
+
+    <form id="chat-form">
+
+        {% csrf_token %}
+
+        <input
+            id="chat-message-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Digite uma mensagem..."
+        >
+
+        <button
+            type="submit"
+            id="send-button"
+        >
+            Enviar
+        </button>
+
+    </form>
+
+
+    <div class="rodape">
+        EducaFamilly — Comunicação entre pais e professores
+    </div>
+
 </div>
 
-<form method="POST" style="margin-top:10px;">
-    {% csrf_token %}
-    <input name="text" autofocus style="width:80%;">
-    <button type="submit">Enviar</button>
-</form>
+
+<script>
+
+    // =========================================
+    // USUÁRIOS
+    // =========================================
+
+    const userId =
+        "{{ other.id }}";
+
+
+    const currentUserId =
+        "{{ request.user.id }}";
+
+
+    // =========================================
+    // WEBSOCKET DO CHAT
+    // =========================================
+
+    const chatProtocol =
+        window.location.protocol === "https:"
+            ? "wss"
+            : "ws";
+
+
+    const chatSocket =
+        new WebSocket(
+            chatProtocol +
+            "://" +
+            window.location.host +
+            "/ws/chat/" +
+            userId +
+            "/"
+        );
+
+
+    const chatMessages =
+        document.getElementById(
+            "chat-messages"
+        );
+
+
+    const chatForm =
+        document.getElementById(
+            "chat-form"
+        );
+
+
+    const messageInput =
+        document.getElementById(
+            "chat-message-input"
+        );
+
+
+    const sendButton =
+        document.getElementById(
+            "send-button"
+        );
+
+
+    const typingStatus =
+        document.getElementById(
+            "typing-status"
+        );
+
+
+    // =========================================
+    // CHAT CONECTADO
+    // =========================================
+
+    chatSocket.onopen = function() {
+
+        console.log(
+            "Chat conectado!"
+        );
+
+        sendButton.disabled = false;
+
+    };
+
+
+    // =========================================
+    // CHAT DESCONECTADO
+    // =========================================
+
+    chatSocket.onclose = function() {
+
+        console.log(
+            "Chat desconectado."
+        );
+
+        sendButton.disabled = true;
+
+    };
+
+
+    // =========================================
+    // ERRO
+    // =========================================
+
+    chatSocket.onerror = function(error) {
+
+        console.error(
+            "Erro no chat:",
+            error
+        );
+
+    };
+
+
+    // =========================================
+    // RECEBER MENSAGEM
+    // =========================================
+
+    chatSocket.onmessage = function(event) {
+
+        const data =
+            JSON.parse(event.data);
+
+
+        // =====================================
+        // MENSAGEM
+        // =====================================
+
+        if (
+            data.type === "message"
+        ) {
+
+            const emptyMessage =
+                document.getElementById(
+                    "empty-message"
+                );
+
+            if (emptyMessage) {
+
+                emptyMessage.remove();
+
+            }
+
+
+            const message =
+                document.createElement(
+                    "div"
+                );
+
+
+            message.classList.add(
+                "mensagem"
+            );
+
+
+            // =================================
+            // MINHA MENSAGEM
+            // =================================
+
+            if (
+                Number(data.sender_id) ===
+                Number(currentUserId)
+            ) {
+
+                message.classList.add(
+                    "enviada"
+                );
+
+                message.textContent =
+                    data.text;
+
+            }
+
+
+            // =================================
+            // MENSAGEM DO OUTRO
+            // =================================
+
+            else {
+
+                message.classList.add(
+                    "recebida"
+                );
+
+
+                const name =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                name.className =
+                    "mensagem-nome";
+
+
+                name.textContent =
+                    data.sender;
+
+
+                message.appendChild(
+                    name
+                );
+
+
+                message.appendChild(
+                    document.createTextNode(
+                        data.text
+                    )
+                );
+
+            }
+
+
+            chatMessages.appendChild(
+                message
+            );
+
+
+            chatMessages.scrollTop =
+                chatMessages.scrollHeight;
+
+        }
+
+
+        // =====================================
+        // DIGITANDO
+        // =====================================
+
+        if (
+            data.type === "typing"
+        ) {
+
+            if (data.is_typing) {
+
+                typingStatus.textContent =
+                    data.username +
+                    " está digitando...";
+
+            } else {
+
+                typingStatus.textContent =
+                    "";
+
+            }
+
+        }
+
+    };
+
+
+    // =========================================
+    // ENVIAR MENSAGEM
+    // =========================================
+
+    chatForm.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const text =
+                messageInput.value.trim();
+
+
+            if (!text) {
+                return;
+            }
+
+
+            if (
+                chatSocket.readyState !==
+                WebSocket.OPEN
+            ) {
+
+                return;
+
+            }
+
+
+            chatSocket.send(
+                JSON.stringify({
+
+                    type: "message",
+
+                    text: text
+
+                })
+            );
+
+
+            messageInput.value = "";
+
+        }
+    );
+
+
+    // =========================================
+    // DIGITANDO
+    // =========================================
+
+    let typingTimer;
+
+
+    messageInput.addEventListener(
+        "input",
+        function() {
+
+            if (
+                chatSocket.readyState !==
+                WebSocket.OPEN
+            ) {
+
+                return;
+
+            }
+
+
+            chatSocket.send(
+                JSON.stringify({
+
+                    type: "typing",
+
+                    is_typing: true
+
+                })
+            );
+
+
+            clearTimeout(
+                typingTimer
+            );
+
+
+            typingTimer =
+                setTimeout(
+                    function() {
+
+                        if (
+                            chatSocket.readyState ===
+                            WebSocket.OPEN
+                        ) {
+
+                            chatSocket.send(
+                                JSON.stringify({
+
+                                    type: "typing",
+
+                                    is_typing: false
+
+                                })
+                            );
+
+                        }
+
+                    },
+                    1000
+                );
+
+        }
+    );
+
+
+    // =========================================
+    // PRESENÇA
+    // =========================================
+
+    const presenceProtocol =
+        window.location.protocol === "https:"
+            ? "wss"
+            : "ws";
+
+
+    const presenceSocket =
+        new WebSocket(
+            presenceProtocol +
+            "://" +
+            window.location.host +
+            "/ws/presence/"
+        );
+
+
+    presenceSocket.onmessage =
+        function(event) {
+
+            const data =
+                JSON.parse(event.data);
+
+
+            if (
+                data.type ===
+                "initial_presence"
+            ) {
+
+                if (
+                    data.online_users.includes(
+                        Number(userId)
+                    )
+                ) {
+
+                    updateStatus(
+                        true,
+                        null
+                    );
+
+                } else {
+
+                    updateStatus(
+                        false,
+                        data.last_seen[userId]
+                    );
+
+                }
+
+            }
+
+
+            if (
+                data.type ===
+                "presence"
+            ) {
+
+                if (
+                    Number(data.user_id) ===
+                    Number(userId)
+                ) {
+
+                    updateStatus(
+                        data.online,
+                        data.last_seen
+                    );
+
+                }
+
+            }
+
+        };
+
+
+    // =========================================
+    // ATUALIZAR STATUS
+    // =========================================
+
+    function updateStatus(
+        online,
+        lastSeen
+    ) {
+
+        const indicator =
+            document.getElementById(
+                "status-indicator"
+            );
+
+
+        const text =
+            document.getElementById(
+                "status-text"
+            );
+
+
+        if (online) {
+
+            indicator.style.color =
+                "green";
+
+            text.style.color =
+                "green";
+
+            text.textContent =
+                "Online";
+
+        } else {
+
+            indicator.style.color =
+                "#999";
+
+            text.style.color =
+                "#777";
+
+
+            if (lastSeen) {
+
+                text.textContent =
+                    formatLastSeen(
+                        lastSeen
+                    );
+
+            } else {
+
+                text.textContent =
+                    "Offline";
+
+            }
+
+        }
+
+    }
+
+
+    // =========================================
+    // ÚLTIMO ACESSO
+    // =========================================
+
+    function formatLastSeen(
+        lastSeen
+    ) {
+
+        const date =
+            new Date(lastSeen);
+
+        const now =
+            new Date();
+
+
+        if (
+            date.toDateString() ===
+            now.toDateString()
+        ) {
+
+            return (
+                "Visto por último às " +
+                date.toLocaleTimeString(
+                    "pt-BR",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                )
+            );
+
+        }
+
+
+        return (
+            "Visto por último em " +
+            date.toLocaleDateString(
+                "pt-BR"
+            )
+        );
+
+    }
+
+
+    // =========================================
+    // COMEÇA NO FINAL DO CHAT
+    // =========================================
+
+    chatMessages.scrollTop =
+        chatMessages.scrollHeight;
+
+</script>
+
+</body>
+
+</html>
 

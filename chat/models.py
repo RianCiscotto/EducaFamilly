@@ -1,20 +1,46 @@
+
 from django.db import models
 from django.conf import settings
 
+
 User = settings.AUTH_USER_MODEL
 
+
 class Message(models.Model):
+
     sender = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="sent_messages"
+        User,
+        on_delete=models.CASCADE,
+        related_name="sent_messages"
     )
+
     receiver = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="received_messages"
+        User,
+        on_delete=models.CASCADE,
+        related_name="received_messages"
     )
+
     text = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+
+    timestamp = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    read = models.BooleanField(
+        default=False
+    )
+
 
     class Meta:
+
         ordering = ["timestamp"]
 
+
     def __str__(self):
-        return f"{self.sender} → {self.receiver}: {self.text[:20]}"
+
+        return (
+            f"{self.sender} → "
+            f"{self.receiver}: "
+            f"{self.text[:20]}"
+        )
+

@@ -1,30 +1,531 @@
-<h1>Bem-vindo ao <span style="color: #2f8f03;">EducaFamilly!</span></h1>
 
-<h3>
-Este site ainda está em desenvolvimento, sendo realizado pelos alunos 
-<span style="color: #0e62df;">Rian Ciscotto</span> e 
-<span style="color: #0e62df;">Felipe Baba</span>, sob orientação do professor 
-<span style="color: #f17807;">Álvaro Luiz</span> no curso de ADS
-</h3>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EducaFamily</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        h3 {
+            font-weight: normal;
+            line-height: 1.6;
+            text-align: center;
+            color: #555;
+        }
+
+        .descricao {
+            margin-top: 25px;
+        }
+
+        .titulo-usuarios {
+            margin-top: 55px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #222;
+        }
+
+        .usuarios {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .usuario {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 18px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .unread-count {
+            color: #ff0000;
+            font-weight: bold;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        .usuario:hover {
+            background: #eef6ea;
+            border-color: #2f8f03;
+        }
+
+        .usuario-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .usuario-nome {
+            color: #222;
+            font-size: 17px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .usuario-nome:hover {
+            color: #2f8f03;
+        }
+
+        .status {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .conversar {
+            background: #2f8f03;
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .conversar:hover {
+            background: #247000;
+        }
+
+        .logout-container {
+            margin-top: 35px;
+            text-align: center;
+        }
+
+        .logout-button {
+            padding: 10px 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-button:hover {
+            background: #c0392b;
+        }
+
+        .rodape {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
 
 
-<h3>O objetivo do site é conectar de forma segura e simples pais e professores, proporcionando uma comunicação melhor entre eles.</h3>
-<br><br><br>
+    <h1>
+        Bem-vindo ao
+        <span style="color: #2f8f03;">
+            EducaFamily!
+        </span>
+    </h1>
 
-<h2>Selecione o usuário que deseja conversar
-</h2>
 
-<ul>
-    {% for u in users %}
-        <li>
-            <a href="/chat/{{ u.id }}/">{{ u.username }}</a>
-        </li>
-    {% endfor %}
-</ul>
-<form id="logout-form" action="{% url 'logout' %}" method="post" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit"
-            style="padding:8px 12px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer;">
-        Sair
-    </button>
-</form>
+    <h3>
+        Este site ainda está em desenvolvimento, sendo realizado pelos alunos
+        <span style="color: #0e62df;">
+            Rian Ciscotto
+        </span>
+        e
+        <span style="color: #0e62df;">
+            Felipe Baba
+        </span>,
+         anteriormente sob orientação do professor
+        <span style="color: #f17807;">
+            Álvaro Luiz Pereira Leiroz
+        </span>
+        no curso de ADS.
+    </span>
+        Agora, orientado pelo professor 
+    </span>,
+        
+        <span style="color: #c20333;">Antonio Tadeu Berardinelli Filho</span>
+    </h3>
+
+
+    <h3 class="descricao">
+        O objetivo do site é conectar de forma segura e simples pais e
+        professores, proporcionando uma comunicação melhor entre eles.
+    </h3>
+
+
+    <!-- ========================================= -->
+    <!-- LISTA DE USUÁRIOS -->
+    <!-- ========================================= -->
+
+    <h2 class="titulo-usuarios">
+        Selecione o usuário que deseja conversar
+    </h2>
+
+
+    <ul class="usuarios">
+
+        {% for u in users %}
+
+            <li class="usuario">
+
+                <div class="usuario-info">
+
+                    
+                    <a href="{% url 'chat_with' u.id %}" class="usuario-nome">
+                    {{ u.username }}
+
+                    {% if u.unread_count > 0 %}
+                    <span class="unread-count">
+                    ({{ u.unread_count }})
+                    </span>
+                        {% endif %}
+                    </a>
+
+
+
+                    <div
+                        id="status-{{ u.id }}"
+                        class="status"
+                    >
+                        ⚪ Offline
+                    </div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'chat_with' u.id %}"
+                    class="conversar"
+                >
+                    Conversar
+                </a>
+
+            </li>
+
+        {% empty %}
+
+            <li class="usuario">
+                <span>Nenhum usuário disponível.</span>
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+
+    <!-- ========================================= -->
+    <!-- LOGOUT -->
+    <!-- ========================================= -->
+
+    <div class="logout-container">
+
+        <form
+            id="logout-form"
+            action="{% url 'logout' %}"
+            method="post"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="logout-button"
+            >
+                Sair
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="rodape">
+        EducaFamilly — Sistema de comunicação entre pais e professores
+    </div>
+
+</div>
+
+
+<!-- ============================================= -->
+<!-- WEBSOCKET DE PRESENÇA -->
+<!-- ============================================= -->
+
+<script>
+
+    const presenceProtocol =
+        window.location.protocol === "https:"
+            ? "wss"
+            : "ws";
+
+
+    const presenceSocket =
+        new WebSocket(
+            presenceProtocol +
+            "://" +
+            window.location.host +
+            "/ws/presence/"
+        );
+
+
+    // =========================================
+    // CONECTOU
+    // =========================================
+
+    presenceSocket.onopen = function() {
+
+        console.log(
+            "Presença conectada!"
+        );
+
+    };
+
+
+    // =========================================
+    // RECEBE PRESENÇA
+    // =========================================
+
+    presenceSocket.onmessage = function(event) {
+
+        const data =
+            JSON.parse(event.data);
+
+
+        // -------------------------------------
+        // ESTADO INICIAL
+        // -------------------------------------
+
+        if (
+            data.type ===
+            "initial_presence"
+        ) {
+
+            data.online_users.forEach(
+                function(userId) {
+
+                    updateUserStatus(
+                        userId,
+                        true,
+                        null
+                    );
+
+                }
+            );
+
+
+            Object.entries(
+                data.last_seen
+            ).forEach(
+                function([userId, lastSeen]) {
+
+                    if (
+                        !data.online_users
+                            .includes(
+                                Number(userId)
+                            )
+                    ) {
+
+                        updateUserStatus(
+                            userId,
+                            false,
+                            lastSeen
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        // -------------------------------------
+        // MUDANÇA DE PRESENÇA
+        // -------------------------------------
+
+        if (
+            data.type ===
+            "presence"
+        ) {
+
+            updateUserStatus(
+                data.user_id,
+                data.online,
+                data.last_seen
+            );
+
+        }
+
+    };
+
+
+    // =========================================
+    // ATUALIZA USUÁRIO NA LISTA
+    // =========================================
+
+    function updateUserStatus(
+        userId,
+        online,
+        lastSeen
+    ) {
+
+        const status =
+            document.getElementById(
+                "status-" + userId
+            );
+
+
+        if (!status) {
+            return;
+        }
+
+
+        if (online) {
+
+            status.textContent =
+                "🟢 Online";
+
+            status.style.color =
+                "green";
+
+        } else {
+
+            status.style.color =
+                "#777";
+
+
+            if (lastSeen) {
+
+                status.textContent =
+                    "⚪ " +
+                    formatLastSeen(
+                        lastSeen
+                    );
+
+            } else {
+
+                status.textContent =
+                    "⚪ Offline";
+
+            }
+
+        }
+
+    }
+
+
+    // =========================================
+    // FORMATA ÚLTIMO ACESSO
+    // =========================================
+
+    function formatLastSeen(
+        lastSeen
+    ) {
+
+        const date =
+            new Date(lastSeen);
+
+        const now =
+            new Date();
+
+
+        const today =
+            date.toDateString() ===
+            now.toDateString();
+
+
+        if (today) {
+
+            return (
+                "Visto por último às " +
+                date.toLocaleTimeString(
+                    "pt-BR",
+                    {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                )
+            );
+
+        }
+
+
+        return (
+            "Visto por último em " +
+            date.toLocaleDateString(
+                "pt-BR"
+            )
+        );
+
+    }
+
+
+    // =========================================
+    // DESCONECTOU
+    // =========================================
+
+    presenceSocket.onclose =
+        function() {
+
+            console.log(
+                "Presença desconectada."
+            );
+
+        };
+
+
+    // =========================================
+    // ERRO
+    // =========================================
+
+    presenceSocket.onerror =
+        function(error) {
+
+            console.error(
+                "Erro na presença:",
+                error
+            );
+
+        };
+
+</script>
+
+</body>
+</html>
+```

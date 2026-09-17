@@ -1,21 +1,314 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
-    <title>Entrar</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Entrar - EducaFamilly
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'chat/style.css' %}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        /* =====================================
+           TÍTULO E DESTAQUE FORA DO QUADRADO
+        ===================================== */
+
+        .header-externo {
+            text-align: center;
+            max-width: 550px;
+            margin-bottom: 25px;
+            padding: 0 20px;
+        }
+
+        .marca-titulo {
+            margin: 0 0 10px 0;
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .texto-laranja {
+            color: #ff7a00;
+        }
+
+        .texto-azul {
+            color: #007bc7;
+        }
+
+        .marca-subtitulo {
+            margin: 0 0 16px 0;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .tag-academico {
+            display: inline-block;
+            background: #ffbb00;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+        }
+
+        /* =====================================
+           CONTAINER PRINCIPAL
+        ===================================== */
+
+        .container {
+            width: 90%;
+            max-width: 440px;
+            background: white;
+            padding: 35px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .titulo-login {
+            margin: 0 0 20px 0;
+            color: #222;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 12px;
+        }
+
+        /* =====================================
+           FORMULÁRIO E INPUTS
+        ===================================== */
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: #2f8f03;
+        }
+
+        .btn-entrar {
+            width: 100%;
+            padding: 12px;
+            background: #2f8f03;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-top: 5px;
+        }
+
+        .btn-entrar:hover {
+            background: #247000;
+        }
+
+        /* =====================================
+           MENSAGENS DE ERRO E LINKS
+        ===================================== */
+
+        .error-message {
+            color: #d9534f;
+            background: #fdf7f7;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 0;
+        }
+
+        .register-box {
+            text-align: center;
+            margin-top: 22px;
+            padding-top: 15px;
+            border-top: 1px dashed #e5e5e5;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .register-link {
+            display: inline-block;
+            margin-top: 6px;
+            color: #2f8f03;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+
+        /* =====================================
+           RODAPÉ
+        ===================================== */
+
+        .rodape {
+            margin-top: 25px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+    </style>
+
 </head>
+
 <body>
-    <h2>Login</h2>
-    <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="username" placeholder="Usuário" required><br><br>
-        <input type="password" name="password" placeholder="Senha" required><br><br>
-        <button type="submit">Entrar</button>
-    </form>
 
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
-    <p>Ainda não tem conta? <a href="{% url 'register' %}">Criar conta</a></p>
+    <!-- =====================================
+         CABEÇALHO EXTERNO (FORA DO CARD)
+    ===================================== -->
 
+    <div class="header-externo">
+
+        <h1 class="marca-titulo">
+            <span class="texto-azul">Educa</span><span class="texto-laranja">Familly</span>
+        </h1>
+
+        <p class="marca-subtitulo">
+            Conectando <span class="texto-azul">docentes</span> e <span class="texto-laranja">famílias</span> para transformar o acompanhamento escolar.
+            Caso ainda não possua acesso como <b>educador</b> ou <b>responsável</b>, crie sua conta e faça parte da nossa comunidade.
+        </p>
+
+       
+
+    </div>
+
+
+    <!-- =====================================
+         CARD DE LOGIN
+    ===================================== -->
+
+    <div class="container">
+
+        <h2 class="titulo-login">
+            Acesse sua conta
+        </h2>
+
+        <!-- FORMULÁRIO DE LOGIN -->
+
+        <form method="POST" class="login-form">
+
+            {% csrf_token %}
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    name="username"
+                    class="login-input"
+                    placeholder="Usuário"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <input
+                    type="password"
+                    name="password"
+                    class="login-input"
+                    placeholder="Senha"
+                    required
+                >
+            </div>
+
+            <button
+                type="submit"
+                class="btn-entrar"
+            >
+                Entrar
+            </button>
+
+        </form>
+
+
+        <!-- ERRO E CADASTRO -->
+
+        {% if error %}
+
+            <p class="error-message">
+                {{ error }}
+            </p>
+
+        {% endif %}
+
+
+        <div class="register-box">
+
+            Primeiro acesso na plataforma?
+            <br>
+
+            <a href="{% url 'register' %}" class="register-link">
+                Cadastre-se como professor ou responsável
+            </a>
+
+        </div>
+
+
+        <!-- RODAPÉ INTERNO -->
+
+        <div class="rodape">
+            EducaFamilly — Integração entre escola e comunidade
+        </div>
+
+    </div>
+    <br><br><br>
+ <div class="tag-academico">
+            Projeto exclusivamente destinado ao Projeto Integrador do curso de ADS da faculdade  Univassouras
+        </div>
 </body>
+
 </html>

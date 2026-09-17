@@ -1,27 +1,328 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
+
 <head>
-    <title>Criar Conta</title>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Criar Conta - EducaFamilly
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'chat/style.css' %}"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        /* =====================================
+           CABEÇALHO EXTERNO (FORA DO CARD)
+        ===================================== */
+
+        .header-externo {
+            text-align: center;
+            max-width: 550px;
+            margin-bottom: 25px;
+            padding: 0 20px;
+        }
+
+        .marca-titulo {
+            margin: 0 0 10px 0;
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .texto-laranja {
+            color: #ff7a00;
+        }
+
+        .texto-azul {
+            color: #007bc7;
+        }
+
+        .marca-subtitulo {
+            margin: 0 0 16px 0;
+            color: #555;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .tag-academico {
+            display: inline-block;
+            background: #000000;
+            color: #ff0000;
+            border: 1px solid #ff0000;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+        }
+
+        /* =====================================
+           CONTAINER PRINCIPAL (CARD DE CADASTRO)
+        ===================================== */
+
+        .container {
+            width: 90%;
+            max-width: 440px;
+            background: white;
+            padding: 35px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .titulo-cadastro {
+            margin: 0 0 20px 0;
+            color: #222;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: center;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 12px;
+        }
+
+        /* =====================================
+           FORMULÁRIO E INPUTS
+        ===================================== */
+
+        .register-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .register-input,
+        .register-select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .register-input:focus,
+        .register-select:focus {
+            border-color: #2f8f03;
+        }
+
+        .btn-registrar {
+            width: 100%;
+            padding: 12px;
+            background: #2f8f03;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-registrar:hover {
+            background: #247000;
+        }
+
+        /* =====================================
+           LINK PARA LOGIN E RODAPÉ
+        ===================================== */
+
+        .login-box {
+            text-align: center;
+            margin-top: 22px;
+            padding-top: 15px;
+            border-top: 1px dashed #e5e5e5;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .login-link {
+            display: inline-block;
+            margin-top: 4px;
+            color: #2f8f03;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        .rodape {
+            margin-top: 25px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+
+    </style>
+
 </head>
+
 <body>
-    <h2>Criar Conta</h2>
 
-    <form method="POST">
-        {% csrf_token %}
+    <!-- =====================================
+         CABEÇALHO EXTERNO (FORA DO CARD)
+    ===================================== -->
 
-        <label>Nome:</label><br>
-        <input type="text" name="name" required><br><br>
+    <div class="header-externo">
 
-        <label>Usuário:</label><br>
-        <input type="text" name="username" required><br><br>
+        <h1 class="marca-titulo">
+            <span class="texto-azul">Educa</span><span class="texto-laranja">Familly</span>
+        </h1>
 
-        <label>Senha:</label><br>
-        <input type="password" name="password" required><br><br>
+        <p class="marca-subtitulo">
+            Conectando <span class="texto-azul">docentes</span> e <span class="texto-laranja">famílias</span> para transformar o acompanhamento escolar.
+        </p>
 
-        <button type="submit">Registrar</button>
-    </form>
+        
 
-    <p>Já tem conta? <a href="{% url 'login' %}">Entrar</a></p>
+    </div>
+
+
+    <!-- =====================================
+         CARD DE REGISTRO
+    ===================================== -->
+
+    <div class="container">
+
+        <h2 class="titulo-cadastro">
+            Criar Conta
+        </h2>
+
+        <!-- FORMULÁRIO DE CADASTRO -->
+
+        <form method="POST" class="register-form">
+
+            {% csrf_token %}
+
+            <div class="input-group">
+                <label class="input-label" for="id_name">
+                    Nome Completo:
+                </label>
+                <input
+                    id="id_name"
+                    type="text"
+                    name="name"
+                    class="register-input"
+                    placeholder="Seu nome completo"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="id_username">
+                    Nome de Usuário:
+                </label>
+                <input
+                    id="id_username"
+                    type="text"
+                    name="username"
+                    class="register-input"
+                    placeholder="Escolha um usuário"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="id_password">
+                    Senha:
+                </label>
+                <input
+                    id="id_password"
+                    type="password"
+                    name="password"
+                    class="register-input"
+                    placeholder="Crie uma senha"
+                    required
+                >
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="id_user_type">
+                    Tipo de Perfil:
+                </label>
+                <select id="id_user_type" name="user_type" class="register-select" required>
+                    <option value="" disabled selected>Selecione...</option>
+                    <option value="teacher">Professor</option>
+                    <option value="parent">Responsável</option>
+                </select>
+            </div>
+
+            <button
+                type="submit"
+                class="btn-registrar"
+            >
+                Registrar
+            </button>
+
+        </form>
+
+
+        <!-- BOX DE NAVEGAÇÃO -->
+
+        <div class="login-box">
+
+            Já possui uma conta cadastrada?
+            <br>
+
+            <a href="{% url 'login' %}" class="login-link">
+                Acessar plataforma
+            </a>
+
+        </div>
+
+
+        <!-- RODAPÉ INTERNO -->
+
+        <div class="rodape">
+            EducaFamilly — Integração entre escola e comunidade
+        </div>
+
+    </div>
 
 </body>
+
 </html>
